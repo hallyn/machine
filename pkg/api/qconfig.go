@@ -47,12 +47,16 @@ func NewDefaultConfig(name string, numCpus, numMemMB uint32, sockDir string) (*q
 		return &qcli.Config{}, fmt.Errorf("Failed creating new default config: %s", err)
 	}
 
+	accel := qcli.MachineAccelerationKVM
+	if !PathExists("/dev/kvm") {
+		accel = ""
+	}
 	c := &qcli.Config{
 		Name: name,
 		Path: path,
 		Machine: qcli.Machine{
 			Type:         qcli.MachineTypePC35,
-			Acceleration: qcli.MachineAccelerationKVM,
+			Acceleration: accel,
 			SMM:          "on",
 		},
 		CPUModel:      "qemu64",
